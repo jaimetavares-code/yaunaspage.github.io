@@ -18,10 +18,57 @@ body{
     background-color: pink;
 }
 
-button{
+button,
+button a,
+button a:link,
+button a:visited,
+button a:hover,
+button a:active{
   color:pink;
   background-color: purple;
   border: none;
   width: 120px;
   height: 70px;
+  text-decoration: none;
+}
+
+/* Loader overlay */
+#page-loader {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #000;
+    z-index: 9999;
+    transition: opacity 400ms ease, visibility 400ms;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: all;
+}
+#page-loader.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+#page-loader .loader-inner {
+    max-width: 90vw;
+    max-height: 90vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#page-loader video,
+#page-loader img {
+    max-width: 100%;
+    max-height: 100%;
+    display: block;
+    border-radius: 8px;
+    box-shadow: 0 6px 30px rgba(0,0,0,0.6);
+}
+
+/* Prevent page scroll while loader is active */
+body.loading {
+    overflow: hidden;
+    touch-action: none;
 }
