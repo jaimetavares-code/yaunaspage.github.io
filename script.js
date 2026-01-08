@@ -1,109 +1,145 @@
-function openPopup(type) {
-    var popup = window.open("", "popup", "width=889px,height=898px");
-    if (type === "image") {
-      popup.document.write("<img src='img/cake.webp' alt='Image'>");
-    } else if (type === "video") {
-      popup.document.write("<video width='800px' height='600px' controls><source src='vid/rko.mp4' type='video/mp4'></video>");
-    } else if (type === "text") {
-      popup.document.write("<p style='background-color:purple;color:pink;font-size:25px;'>You me the gas station. what meal are we having? Gas station sushi. Hell yes. Uh oh there was a roofy in our gas station sushi. We wake up in a sewer full of fish. Horny fish. What does that mean? Fish orgy. The stench draws in a bear. Bear fight? Bare fists? Bare… Naked? I think so! We befriend the bear after beating it into a brawl. We ride it into a chucky cheese. Dance dance revolution! Revolution? Over throw the government? I think so! I black out again. I wake up and do a line. I white out, which i didnt even know could happen. I reincarnate as jesus. I turn into a jet and fly into the sun. I wake up and smoke a joint. I green out?? I wake up and i am the sun?? Oh no! Looks like the meth is kicking ijsjnjðommsooskauaajs rge snAAA AAAAAA AAAAAA.</p>");
-    } else if (type === "meme") {
-      popup.document.write("<a href='https://www.google.com/search?sca_esv=594589735&sxsrf=AM9HkKkF2a1Wl2tgi_iI9iRklCo4mcpJmA:1703939477922&q=randy+orton+memes&tbm=isch&source=lnms&sa=X&ved=2ahUKEwjembOalbeDAxVUUqQEHfjqDMgQ0pQJegQICxAB&biw=1482&bih=958'> <p style='font-size:35px;'>what's this? :o</p> </a>");
-    }
-    popup.document.write("<button style='color:pink;background-color: purple;border: none;width: 120px;height: 70px; text-decoration:none' onclick='window.close()'>Close</button>");
-  }
+// ======================
+// PAGE LOADER
+// ======================
 
-  (function () {
-  const loader = document.getElementById('page-loader');
-  if (!loader) return;
-
-  // Make page start in loading state
-  document.documentElement.classList.add('js-loading');
-  document.body.classList.add('loading');
-
-  const inner = loader.querySelector('.loader-inner');
-  const mediaType = loader.dataset.media || 'video'; // "video" or "gif"
-  const src = loader.dataset.src || '';
-  const gifDuration = parseInt(loader.dataset.gifDuration || '2000', 10); // ms
-  const maxFallback = 7000; // max time to force-hide loader (ms)
-
-  let hideTimer;
-
-  function hideLoader() {
+(function () {
+    const loader = document.getElementById('page-loader');
     if (!loader) return;
-    loader.classList.add('hidden');
-    document.body.classList.remove('loading');
-    document.documentElement.classList.remove('js-loading');
-    // remove media to free memory
-    inner.innerHTML = '';
-    clearTimeout(hideTimer);
-  }
 
-  function forceHideAfter(ms) {
-    hideTimer = setTimeout(() => {
-      hideLoader();
-    }, ms);
-  }
+    document.body.classList.add('loading');
+    const inner = loader.querySelector('.loader-inner');
 
-  // Create media element dynamically to avoid unnecessary downloads
-  if (mediaType === 'video' && src) {
-    const vid = document.createElement('video');
-    vid.id = 'loader-media';
-    vid.src = src;
-    vid.autoplay = true;
-    vid.muted = true;
-    vid.playsInline = true;
-    vid.preload = 'auto';
-    vid.setAttribute('playsinline', '');
-    vid.style.maxWidth = '100%';
-    vid.style.height = 'auto';
-    inner.appendChild(vid);
+    const mediaType = loader.dataset.media || 'video'; // "video" or "gif"
+    const src = loader.dataset.src || '';
+    const gifDuration = parseInt(loader.dataset.gifDuration || '2000', 10);
+    const maxFallback = 7000; // max time to force-hide loader
 
-    // Ensure it will start; show until it ends or fallback
-    vid.addEventListener('canplaythrough', () => {
-      // Some browsers require a short play call
-      const playPromise = vid.play();
-      if (playPromise && typeof playPromise.catch === 'function') {
-        playPromise.catch(() => { /* autoplay blocked? still keep showing then fallback */ });
-      }
-    }, { once: true });
+    let hideTimer;
 
-    vid.addEventListener('ended', hideLoader, { once: true });
-    vid.addEventListener('error', () => {
-      // fallback to a short display so user is not stuck
-      forceHideAfter(2000);
-    }, { once: true });
+    function hideLoader() {
+        if (!loader) return;
+        loader.classList.add('hidden');
+        document.body.classList.remove('loading');
+        applyRandomCursor(); // Apply custom cursor after loader hides
+        inner.innerHTML = '';
+        clearTimeout(hideTimer);
+    }
 
-    // safety: hide after maxFallback
-    forceHideAfter(maxFallback);
+    function forceHideAfter(ms) {
+        hideTimer = setTimeout(hideLoader, ms);
+    }
 
-  } else if (mediaType === 'gif' && src) {
-    const img = document.createElement('img');
-    img.id = 'loader-gif';
-    img.src = src;
-    img.alt = 'Loading';
-    inner.appendChild(img);
+    if (mediaType === 'video' && src) {
+        const vid = document.createElement('video');
+        vid.src = src;
+        vid.autoplay = true;
+        vid.muted = true;
+        vid.playsInline = true;
+        vid.preload = 'auto';
+        vid.style.maxWidth = '100%';
+        vid.style.height = 'auto';
+        inner.appendChild(vid);
 
-    img.addEventListener('load', () => {
-      // keep GIF visible for data-gif-duration ms (so single-loop GIFs can be fully seen)
-      const duration = Math.max(300, gifDuration);
-      forceHideAfter(duration);
-    }, { once: true });
+        vid.addEventListener('canplaythrough', () => {
+            const playPromise = vid.play();
+            if (playPromise && typeof playPromise.catch === 'function') {
+                playPromise.catch(() => {});
+            }
+        }, { once: true });
 
-    img.addEventListener('error', () => {
-      // fallback
-      forceHideAfter(1200);
-    }, { once: true });
+        vid.addEventListener('ended', hideLoader, { once: true });
+        vid.addEventListener('error', () => forceHideAfter(2000), { once: true });
 
-    // safety fallback
-    forceHideAfter(maxFallback);
-  } else {
-    // no valid media configured: brief generic loader then hide
-    forceHideAfter(800);
-  }
+        forceHideAfter(maxFallback);
 
-  // Hide loader if user navigates away quickly or after page load + short delay
-  window.addEventListener('load', () => {
-    // If media is still playing, let its events handle hide. Otherwise enforce small delay.
-    forceHideAfter(1200);
-  });
+    } else if (mediaType === 'gif' && src) {
+        const img = document.createElement('img');
+        img.src = src;
+        img.alt = 'Loading';
+        inner.appendChild(img);
+
+        img.addEventListener('load', () => {
+            forceHideAfter(Math.max(300, gifDuration));
+        }, { once: true });
+
+        img.addEventListener('error', () => forceHideAfter(1200), { once: true });
+        forceHideAfter(maxFallback);
+    } else {
+        forceHideAfter(800);
+    }
+
+    window.addEventListener('load', () => forceHideAfter(1200));
 })();
+
+// ======================
+// MEME GENERATOR
+// ======================
+
+const images = [
+    "img/memes/1.jpg","img/memes/2.png","img/memes/3.jpg",
+    "img/memes/4.jpg","img/memes/5.jpg","img/memes/6.jpg",
+    "img/memes/7.jpg","img/memes/8.png","img/memes/9.jpg",
+    "img/memes/10.webp","img/memes/11.png","img/memes/12.png",
+    "img/memes/13.jpg","img/memes/14.jpg","img/memes/15.jpg",
+    "img/memes/16.jpg"
+];
+
+const videos = [
+    "vid/memes/1.mp4","vid/memes/2.mp4","vid/memes/3.mp4",
+    "vid/memes/4.mp4","vid/memes/5.mp4","vid/memes/6.mp4",
+    "vid/memes/7.mp4","vid/memes/8.mp4","vid/memes/9.mp4"
+];
+
+const memeButton = document.getElementById("generateBtn");
+const memeContainer = document.getElementById("memeContainer");
+
+memeButton.addEventListener("click", () => {
+    memeContainer.innerHTML = ""; // clear previous
+
+    const isVideo = Math.random() < 0.5;
+
+    if (isVideo) {
+        const video = document.createElement("video");
+        video.src = videos[Math.floor(Math.random() * videos.length)];
+        video.controls = true;
+        video.autoplay = true;
+        video.loop = true;
+        video.style.maxWidth = "100%";
+        video.style.maxHeight = "400px";
+        memeContainer.appendChild(video);
+    } else {
+        const img = document.createElement("img");
+        img.src = images[Math.floor(Math.random() * images.length)];
+        img.style.maxWidth = "100%";
+        img.style.maxHeight = "400px";
+        memeContainer.appendChild(img);
+    }
+});
+
+// ======================
+// CUSTOM CURSOR
+// ======================
+
+const normalCursors = [
+    "cursors/1.png","cursors/2.png","cursors/3.png",
+    "cursors/4.png","cursors/5.png","cursors/6.png",
+    "cursors/7.png"
+];
+
+function applyRandomCursor() {
+    const cursor = normalCursors[Math.floor(Math.random() * normalCursors.length)];
+    const loader = document.getElementById('page-loader');
+
+    // only apply cursor if loader is hidden
+    if (!loader || loader.classList.contains('hidden')) {
+        const img = new Image();
+        img.src = cursor;
+        img.onload = () => {
+            document.documentElement.style.cursor = `url("${cursor}") 0 0, auto`;
+        };
+    }
+}
+
+// Hook the "Randomize Cursor" button
+const cursorButton = document.getElementById("cursorBtn");
+if (cursorButton) cursorButton.addEventListener("click", applyRandomCursor);

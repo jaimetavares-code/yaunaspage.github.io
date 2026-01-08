@@ -1,38 +1,70 @@
-body{
-    background: linear-gradient(to left, #26a9fa, #0051ff);
-    text-align: center;
+/* =========================
+   CURSOR CONTROL
+   ========================= */
+
+/* Let all elements inherit cursor from html/body */
+*,
+*::before,
+*::after {
+    cursor: inherit;
 }
 
-.hp{
-  color:purple;
-  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-  font-size: 250%;
+/* Cursor source */
+html, body {
+    height: 100%;       /* make body fill viewport */
+    min-height: 100vh;  /* ensure minimum height = screen height */
 }
 
-.birthday_message{
-    color:white;
+body {
+    display: flex;
+    flex-direction: column;  /* keep content stacked vertically */
+    align-items: center;     /* center buttons/memes horizontally */
+    justify-content: flex-start; /* start from top */
+    background-color: cornflowerblue;
+    color: violet;
+}
+/* Loader should always use default cursor */
+#page-loader,
+#page-loader * {
+    cursor: auto !important;
+}
+
+/* =========================
+   TEXT STYLES
+   ========================= */
+.hp {
+    color: purple;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 250%;
+}
+
+.birthday_message {
+    color: white;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent; 
-    font-family:Arial, Helvetica, sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
     font-size: 20px;
     background-color: pink;
 }
 
-button,
-button a,
-button a:link,
-button a:visited,
-button a:hover,
-button a:active{
-  color:pink;
-  background-color: purple;
-  border: none;
-  width: 120px;
-  height: 70px;
-  text-decoration: none;
+/* =========================
+   BUTTON STYLES
+   ========================= */
+button {
+    color: pink;
+    background-color: purple;
+    border: none;
+    width: 120px;
+    height: 70px;
+    text-decoration: none;
+    font-size: 16px;
+    margin: 5px;
+    cursor: inherit; /* inherit global cursor */
 }
 
-/* Loader overlay */
+/* =========================
+   LOADER STYLES
+   ========================= */
 #page-loader {
     position: fixed;
     inset: 0;
@@ -46,11 +78,13 @@ button a:active{
     visibility: visible;
     pointer-events: all;
 }
+
 #page-loader.hidden {
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
 }
+
 #page-loader .loader-inner {
     max-width: 90vw;
     max-height: 90vh;
@@ -58,6 +92,7 @@ button a:active{
     align-items: center;
     justify-content: center;
 }
+
 #page-loader video,
 #page-loader img {
     max-width: 100%;
@@ -71,4 +106,14 @@ button a:active{
 body.loading {
     overflow: hidden;
     touch-action: none;
+}
+
+/* =========================
+   MEME CONTAINER
+   ========================= */
+#memeContainer img,
+#memeContainer video {
+    max-width: 100%;
+    max-height: 400px;
+    margin-top: 20px;
 }
